@@ -10,7 +10,6 @@ sys.path.append(project_root)
 
 # LangChain Imports
 from langchain_openai import ChatOpenAI
-# FIX: Use the new dedicated library to avoid deprecation warnings
 from langchain_ollama import ChatOllama 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -32,7 +31,6 @@ def get_llm():
     
     elif LLM_PROVIDER == "ollama":
         print("🦙 Initializing LLM: Local Llama 3 via Ollama")
-        # FIX: Updated class usage
         return ChatOllama(model="llama3", temperature=0)
     
     else:
@@ -45,26 +43,28 @@ def run_rag_pipeline(question: str):
     print(f"\n💬 Question: {question}")
     
     # 1. Retrieval
-    # Increased k to 5 to get more context chances
-    retrieved_hits = query_vector_db(question, k=5)
+    # OPTIMIZATION: Increased k from 5 to 10 to capture lists spread across chunks
+    retrieved_hits = query_vector_db(question, k=10)
     
     if not retrieved_hits:
         return "No tengo información suficiente en los documentos."
 
     context_text = format_docs(retrieved_hits)
     
-    # --- DEBUGGING: PEEK INTO THE BLACK BOX ---
-    # Esto nos permitirá ver qué está leyendo realmente el modelo
-    print("\n" + "-"*20 + " DEBUG: CONTEXTO RECUPERADO " + "-"*20)
-    print(context_text[:500] + "...\n(truncated)") # Print first 500 chars
+    # --- DEBUGGING ---
+    print("\n" + "-"*20 + " DEBUG: CONTEXTO (Primeros 500 chars) " + "-"*20)
+    print(context_text[:500] + "...\n(truncated)")
     print("-" * 60 + "\n")
-    # -------------------------------------------
+    # -----------------
     
     # 2. Augmentation
     template = """
-    Eres un asistente experto. Usa EXCLUSIVAMENTE el siguiente contexto para responder la pregunta.
+    Eres un asistente académico experto. Usa EXCLUSIVAMENTE el siguiente contexto para responder la pregunta.
     
-    Si el contexto no tiene la respuesta, di "No encuentro esa información".
+    Instrucciones:
+    1. Si encuentras una lista de materias, enuméralas.
+    2. Si el texto está cortado, intenta inferir el contexto lógico.
+    3. Si de verdad no hay respuesta, di "No encuentro esa información".
     
     CONTEXTO:
     {context}
