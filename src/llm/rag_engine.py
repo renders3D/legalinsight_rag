@@ -42,29 +42,25 @@ def format_docs(docs_with_scores):
 def run_rag_pipeline(question: str):
     print(f"\n💬 Question: {question}")
     
-    # 1. Retrieval
-    # OPTIMIZATION: Increased k from 5 to 10 to capture lists spread across chunks
-    retrieved_hits = query_vector_db(question, k=10)
-    
-    if not retrieved_hits:
-        return "No tengo información suficiente en los documentos."
+    # Retrieve
+    retrieved_hits = query_vector_db(question, k=7) # k=7 is a sweet spot
+    if not retrieved_hits: return "No tengo información."
 
     context_text = format_docs(retrieved_hits)
     
-    # --- DEBUGGING ---
-    print("\n" + "-"*20 + " DEBUG: CONTEXTO (Primeros 500 chars) " + "-"*20)
-    print(context_text[:500] + "...\n(truncated)")
+    # --- DEBUG: Ver qué recuperó PDFPlumber ---
+    print("\n" + "-"*20 + " DEBUG: CONTEXTO " + "-"*20)
+    print(context_text[:500] + "...")
     print("-" * 60 + "\n")
-    # -----------------
     
-    # 2. Augmentation
+    # --- PROMPT REFORZADO (GROUNDING) ---
     template = """
-    Eres un asistente académico experto. Usa EXCLUSIVAMENTE el siguiente contexto para responder la pregunta.
+    Eres un asistente administrativo riguroso. Usa el siguiente contexto para responder.
     
-    Instrucciones:
-    1. Si encuentras una lista de materias, enuméralas.
-    2. Si el texto está cortado, intenta inferir el contexto lógico.
-    3. Si de verdad no hay respuesta, di "No encuentro esa información".
+    REGLAS DE ORO:
+    1. Solo enumera materias si aparecen explícitamente como asignaturas en una lista o tabla (ej: "Matemática I", "Física").
+    2. NO confundas los temas de una materia (ej: "Pitágoras", "Matrices") con el nombre de la materia.
+    3. Si la lista no está clara, di "No encuentro la lista explícita de materias".
     
     CONTEXTO:
     {context}
@@ -75,7 +71,7 @@ def run_rag_pipeline(question: str):
     
     prompt = ChatPromptTemplate.from_template(template)
     
-    # 3. Generation
+    # Generation
     llm = get_llm()
     rag_chain = prompt | llm | StrOutputParser()
     

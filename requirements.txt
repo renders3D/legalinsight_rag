@@ -14,7 +14,8 @@ chromadb
 sentence-transformers  # Required for HuggingFaceEmbeddings
 
 # --- Document Loaders ---
-pypdf
+# pypdf is not good with tables and complex layouts, use pdfplumber instead
+pdfplumber
 unstructured
 
 # --- Utilities ---
