@@ -4,9 +4,13 @@ langchain-community
 langchain-core
 langchain-openai
 langchain-huggingface
+langchain-chroma
 
 # --- Vector Database ---
 chromadb
+
+# --- Local AI Engines ---
+sentence-transformers  # Required for HuggingFaceEmbeddings
 
 # --- Document Loaders ---
 pypdf
@@ -14,6 +18,6 @@ unstructured
 
 # --- Utilities ---
 python-dotenv
-tiktoken  # Tokenizer for OpenAI models
+tiktoken
 numpy
 pandas

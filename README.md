@@ -11,7 +11,7 @@
 1.  **Ingestion:** Loading PDF documents and splitting text into semantic chunks.
 2.  **Embedding:** Converting text chunks into vectors ($\mathbb{R}^n$) using Transformer models.
 3.  **Storage:** Indexing vectors in **ChromaDB** for efficient similarity search.
-4.  **Retrieval:** Finding the top-$k$ most relevant chunks for a user query (Cosine Similarity).
+4.  **Retrieval:** Finding the top-k most relevant chunks for a user query (Cosine Similarity).
 5.  **Generation:** Using an LLM (Large Language Model) to synthesize an answer based *only* on the retrieved context.
 
 ## 🛠️ Tech Stack
