@@ -5,6 +5,7 @@ langchain-core
 langchain-openai
 langchain-huggingface
 langchain-chroma
+langchain-ollama
 
 # --- Vector Database ---
 chromadb
