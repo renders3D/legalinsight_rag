@@ -1,0 +1,19 @@
+# --- Core RAG Framework ---
+langchain
+langchain-community
+langchain-core
+langchain-openai
+langchain-huggingface
+
+# --- Vector Database ---
+chromadb
+
+# --- Document Loaders ---
+pypdf
+unstructured
+
+# --- Utilities ---
+python-dotenv
+tiktoken  # Tokenizer for OpenAI models
+numpy
+pandas
